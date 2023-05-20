@@ -10,11 +10,23 @@ include 'get_user.php';
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
     <link rel="stylesheet" href="bootstrap-5.3.0-alpha1-examples\assets\dist\css\bootstrap.min.css">
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="style.css"> 
     <script src="bootstrap-5.3.0-alpha1-examples\assets\dist\js\bootstrap.bundle.min.js"></script>
 </head>
 <body>
     
+ <?php
+  $limit=3;
+  if(isset($_GET['page'])){
+    $Page_number = $_GET['page'];
+  }
+  else{
+    $Page_number = 1;
+  }
+  $initial_page=($Page_number - 1 ) *  $limit;
+  $getQuery= "SELECT * FROM `user` LIMIT $initial_page,$limit";
+  $result = mysqli_query($con,$getQuery);
+?> 
 <nav class="navbar navbar-expand-lg bg-dark" aria-label="Thirteenth navbar example">
     <div class="container-fluid">
       <a class="navbar-brand col-lg-2 me-0" href="#">Centered nav</a>
@@ -50,6 +62,13 @@ include 'get_user.php';
                   <input type="password" name="confirmpass" placeholder="confirmer votre mot de passe"  class="form-control rounded-4" required><br>
                   <input type="tel" name="tel" placeholder="entrez votre numero de telephone" class="form-control rounded-4" required><br>
                   <input type="submit" value="S'enregistrer" class="w-100 mb-2 btn btn-lg rounded-4 btn-success">
+                  <p class="error_message">
+                    <?php
+                    if(isset($erreur)){
+                        echo $erreur;
+                    }
+                      ?>
+                  </p>
                 </form>
                 </div>
               </div>
@@ -94,11 +113,50 @@ include 'get_user.php';
                   </div>
                 </div>
               </div>
-              <td><button class="btn btn-danger">Delete</button></td>
+              <td><button class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#delete">Delete</button></td>
+              <div class="modal" id="delete">
+                  <div class="modal-dialog">
+                    <div class="modal-content">
+                      <div class="modal-header">
+                        <h2>Delete</h2>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                      </div>
+                      <div class="modal-body">
+                        <h4>Do you want to delete your account?</h4> <br>
+                        <input type="submit" value="Delete" class="w-100 mb-2 btn btn-lg rounded-4 btn-success">
+                       
+                      </div>
+                   </div>
+                  </div>
+              </div>
             </tr>
             <?php }} ?>
             </tbody>
           </table>
+          <?php
+              $getQuery= "SELECT COUNT(*) FROM `user`";
+              $result = mysqli_query($con,$getQuery);
+              $rows = mysqli_fetch_row($result);
+              $total_rows = $rows[0];
+              echo "</br>";
+              $total_pages = ceil($total_rows/$limit);
+              $pageURL = "";
+              if($Page_number>=2){
+                echo"<a href='acceuil.php?page=".($Page_number-1)."'> << </a>";
+              }
+              for($i=1;$i<=$total_pages;$i++){
+                if($i==$Page_number){
+                  $pageURL.="<a class = 'active' href ='acceuil.php?page=".$i."'>".$i."</a>";
+                }
+                else{
+                  $pageURL.="<a href ='acceuil.php?page=".$i."'>".$i."</a>";
+                }
+              }
+              echo $pageURL;
+              if($Page_number<$total_pages){
+                echo "<a href='acceuil.php?page=".($Page_number+1)."'> >> </a>";
+              }
+            ?>
         </div>
       </div>
   </div>

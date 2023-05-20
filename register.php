@@ -1,5 +1,6 @@
 <?php
-include 'enregistrement.php';
+  include 'enregistrement.php';
+  
 ?>
 <!DOCTYPE html>
 <html lang="fr">
@@ -12,7 +13,7 @@ include 'enregistrement.php';
    
 </head>
 <body>
-    <form action="" class="box" method="POST" action="">
+    <form action="" class="box" method="POST">
         <div class="box-title">
             INSCRIPTION
         </div>

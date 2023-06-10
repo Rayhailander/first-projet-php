@@ -1,6 +1,6 @@
 <?php
-     include 'config.php';
-     if(isset($_POST["username"],$_POST["email"],$_POST["password"],$_POST["tel"],$_POST["confirmpass"])){
+    include 'config.php';
+    if(isset($_POST["username"],$_POST["email"],$_POST["password"],$_POST["tel"],$_POST["confirmpass"])){
         $username=validation( $_POST["username"]);
         $email=validation( $_POST["email"]);
         $password=validation( $_POST["password"]);

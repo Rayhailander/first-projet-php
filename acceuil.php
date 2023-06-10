@@ -12,6 +12,7 @@ include 'get_user.php';
     <link rel="stylesheet" href="bootstrap-5.3.0-alpha1-examples\assets\dist\css\bootstrap.min.css">
     <link rel="stylesheet" href="style.css"> 
     <script src="bootstrap-5.3.0-alpha1-examples\assets\dist\js\bootstrap.bundle.min.js"></script>
+    <script src="jquery.min.js_3.5.1\cdnjs\jquery.min.js"></script>
 </head>
 <body>
     
@@ -24,7 +25,7 @@ include 'get_user.php';
     $Page_number = 1;
   }
   $initial_page=($Page_number - 1 ) *  $limit;
-  $getQuery= "SELECT * FROM `user` LIMIT $initial_page,$limit";
+  $getQuery= "select * from `user` where type !='admin' LIMIT $initial_page,$limit";
   $result = mysqli_query($con,$getQuery);
 ?> 
 <nav class="navbar navbar-expand-lg bg-dark" aria-label="Thirteenth navbar example">
@@ -56,11 +57,11 @@ include 'get_user.php';
                 </div>
                 <div class="modal-body">
                 <form method="POST" action="enregistrement.php">
-                  <input type="text" name="username" placeholder="entrez un nom d'utilisateur" class="form-control rounded-4" required><br>
-                  <input type="email" name="email" placeholder="entrez votre email" class="form-control rounded-4" required><br>
+                  <input type="text"  name="username" placeholder="entrez un nom d'utilisateur" class="form-control rounded-4" required><br>
+                  <input type="email"  name="email" placeholder="entrez votre email" class="form-control rounded-4" required><br>
                   <input type="password" name="password" placeholder="entrez votre mot de passe"  class="form-control rounded-4" required><br>
-                  <input type="password" name="confirmpass" placeholder="confirmer votre mot de passe"  class="form-control rounded-4" required><br>
-                  <input type="tel" name="tel" placeholder="entrez votre numero de telephone" class="form-control rounded-4" required><br>
+                  <input type="password"  name="confirmpass" placeholder="confirmer votre mot de passe"  class="form-control rounded-4" required><br>
+                  <input type="tel"  name="tel" placeholder="entrez votre numero de telephone" class="form-control rounded-4" required><br>
                   <input type="submit" value="S'enregistrer" class="w-100 mb-2 btn btn-lg rounded-4 btn-success">
                   <p class="error_message">
                     <?php
@@ -76,6 +77,7 @@ include 'get_user.php';
           </div>
           <table class="table table-striped table-striped ">
             <thead>
+              <th>ID</th>
               <th>NAME</th>
               <th>EMAIL</th>
               <th>NUMBER</th>
@@ -89,46 +91,15 @@ include 'get_user.php';
               foreach($result as $rows){
             ?>
             <tr>
+              <td><?php echo $rows['id'] ?></td>
               <td><?php echo $rows['user_name'] ?></td>
               <td><?php echo $rows['email'] ?></td>
               <td><?php echo $rows['tel'] ?></td>
               <td><?php echo$rows['type'] ?></td>
-              <div id="button">
-                <td><button class="btn btn-info" data-bs-toggle="modal" data-bs-target="#update">Edit</button></td>
-                <div class="modal" id="update">
-                  <div class="modal-dialog">
-                    <div class="modal-content">
-                     <div class="modal-header">
-                        <h3>Update</h3>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                      </div>
-                      <div class="modal-body">
-                        <form method="POST" action="update.php">
-                          <input type="text" value="<?php  echo $rows['user_name'] ?>" name="username" class="form-control rounded-4" required><br>
-                          <input type="email" name="email"value="<?php  echo $rows['email'] ?>" class="form-control rounded-4" required><br>
-                          <input type="tel" name="te" value="<?php  echo $rows['tel'] ?>" class="form-control rounded-4" required><br>
-                          <input type="submit" value="Update" class="w-100 mb-2 btn btn-lg rounded-4 btn-success">
-                        </form>
-                      </div>
-                  </div>
-                </div>
-              </div>
-              <td><button class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#delete">Delete</button></td>
-              <div class="modal" id="delete">
-                  <div class="modal-dialog">
-                    <div class="modal-content">
-                      <div class="modal-header">
-                        <h2>Delete</h2>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                      </div>
-                      <div class="modal-body">
-                        <h4>Do you want to delete your account?</h4> <br>
-                        <input type="submit" value="Delete" class="w-100 mb-2 btn btn-lg rounded-4 btn-success">
-                       
-                      </div>
-                   </div>
-                  </div>
-              </div>
+              <td><button class="btn btn-info editbtn" id="" >Edit</button></td>
+                
+              <td><button class="btn btn-danger deletebtn" id="">Delete</button></td>
+             
             </tr>
             <?php }} ?>
             </tbody>
@@ -161,5 +132,64 @@ include 'get_user.php';
       </div>
   </div>
 </div>
+<div class="modal" id="updatemodal">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3>Update</h3>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+    <div class="modal-body">
+      <form method="POST" action='update.php'>
+        <input type="hidden" id="id" name="idname" class="form-control rounded-4" required><br>
+        <input type="text" id="name" name="username" class="form-control rounded-4" required><br>
+        <input type="email" id="email" name="email" class="form-control rounded-4" required><br>
+        <input type="tel" id="tel" name="te"  class="form-control rounded-4" required><br>
+        <input type="submit" name="updatevalue" value="Update" class="w-100 mb-2 btn btn-lg rounded-4 btn-success">
+      </form>
+    </div>
+  </div>
+</div>
+<div class="modal" id="deletemodal">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2>Delete</h2>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body">
+        <form method="POST">
+          <input type="hidden" id="dname" name="username" class="form-control rounded-4" required><br>
+          <h4>Do you want to delete your account?</h4> <br>
+          <input type="submit" value="Delete" class="w-100 mb-2 btn btn-lg rounded-4 btn-success">    
+        </form>       
+      </div>
+    </div>
+  </div>
+</div>
+<script>
+  $(document).ready(function(){
+    $('.deletebtn').on('click', function(){
+      $('#deletemodal').modal('show');
+      $tr=$(this).closest('tr');
+      var dat=$tr.children("td").map(function(){
+        return $(this).text();
+      }).get();
+      $('#dname').val(dat[1]);
+    });
+
+    $('.editbtn').on('click', function(){
+      $('#updatemodal').modal('show');
+      $tr=$(this).closest('tr');
+      var data=$tr.children("td").map(function(){
+        return $(this).text();
+      }).get(); 
+      $('#id').val(data[0]);
+      $('#name').val(data[1]);
+      $('#email').val(data[2]);
+      $('#tel').val(data[3]);
+    });
+  });
+</script>
 </body>
 </html>
